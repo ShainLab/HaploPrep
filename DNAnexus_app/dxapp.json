@@ -1,0 +1,96 @@
+{
+  "name": "HaploPrep",
+  "title": "HaploPrep",
+  "summary": "Identify high-quality heterozygous SNPs and prepare them for haplotype phasing by filtering variants based on population frequency, allelic balance, and sequencing depth from DNA-seq data.",
+  "version": "1.2.0",
+  "dxapi": "1.0.0",
+  "inputSpec": [
+    {
+      "name": "DNAbam",
+      "help": "",
+      "class": "file",
+      "patterns": ["*.bam"],
+      "optional": false
+    },
+    {
+      "name": "FBvcf",
+      "help": "",
+      "class": "file",
+      "patterns": ["*.vcf"],
+      "optional": false
+    },
+    {
+      "name": "FBtxt",
+      "help": "",
+      "class": "array:file",
+      "patterns": ["*.txt"],
+      "optional": false
+    }
+  ],
+  "outputSpec": [
+    {
+      "name": "InputVariantsforphasing",
+      "help": "",
+      "class": "file",
+      "patterns": ["*"]
+    },
+    {
+      "name": "Mpileup",
+      "help": "",
+      "class": "file",
+      "patterns": ["*"]
+    },
+    {
+      "name": "InformativeSNPstxt",
+      "help": "",
+      "class": "file",
+      "patterns": ["*"]
+    },
+    {
+      "name": "InformativeSNPsvcf",
+      "help": "",
+      "class": "file",
+      "patterns": ["*"]
+    },
+    {
+      "name": "InformativeSNPsMpileupInput",
+      "help": "",
+      "class": "file",
+      "patterns": ["*"]
+    },
+    {
+      "name": "phasedSNPsVCF",
+      "help": "",
+      "class": "file",
+      "patterns": ["*"]
+    }
+  ],
+  "runSpec": {
+    "interpreter": "bash",
+    "timeoutPolicy": {
+      "*": {
+        "hours": 48
+      }
+    },
+    "distribution": "Ubuntu",
+    "release": "16.04",
+    "version": "0",
+    "file": "src/code.sh"
+  },
+  "access": {
+    "network": [
+      "*"
+    ],
+    "project": "CONTRIBUTE"
+  },
+  "ignoreReuse": false,
+  "regionalOptions": {
+    "aws:us-east-1": {
+      "systemRequirements": {
+        "*": {
+          "instanceType": "mem1_ssd1_x4"
+        }
+      }
+    }
+  }
+}

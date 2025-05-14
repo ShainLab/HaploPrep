@@ -1,0 +1,238 @@
+#!/bin/bash
+
+# Stand-alone mutation burden footprint calculation script 
+# Calculate callable footprint
+# Ellie Fewings, 12Nov2018
+
+# Running:
+# footprints -b <bam> -i <intervals bed file> -n <minimum coverage(default=5)> -o <output file> -h <help>
+
+# Create temporary folder
+
+# Set abort function
+abort()
+{
+    echo "Uh oh. An error occurred."
+    echo ""
+    echo "Exiting..."
+    if [ -d "./tmpFP" ] ; then    
+      rm -r ./tmpFP
+    fi
+    exit 2
+}
+
+trap 'abort' SIGINT SIGTERM
+
+set -e
+
+# Set help function
+helpFunction()
+{
+  echo ""
+  echo "Program: Footprint calculation (for accurately calculating sequencing footprint)"
+  echo ""
+  echo "Version: 0.1"
+  echo ""
+  echo "Usage: ./footprints -b <bam> -i <intervals bed file> -n <minimum coverage[default=5]> -o <output file>"
+  echo ""
+  echo "Options:"
+      echo -e "\t-b\tBam: Bam file or directory containing bam files on which footprints are to be calculated [required]"
+      echo -e "\t-i\tIntervals bed file: Genomic intervals on which to operate [required]"
+      echo -e "\t-n\tMinimum coverage: Minimum number of reads a base needs to be covered by to count as part of callable footprint [default=5]"
+      echo -e "\t-o\tOutput file: Text output for results [default=STDOUT]"
+      echo -e "\t-h\tHelp: Does what it says on the tin"
+  echo ""
+}
+
+# Set default minimum coverage to 5
+min=5
+
+# Accept arguments specified by user
+while getopts "b:i:n:o:h" opt; do
+  case $opt in
+    b ) bam="$OPTARG"
+    ;;
+    i ) int="$OPTARG"
+    ;;
+    n ) min="$OPTARG"
+    ;;
+    o ) out="$OPTARG"
+    ;;
+    h ) helpFunction ; exit 0
+    ;;
+    * ) echo "Incorrect arguments" ; helpFunction ; abort
+    ;;
+  esac
+done
+
+# Check minimum number of arguments
+if [ $# -lt 2 ]; then
+  echo "Not enough arguments"
+  helpFunction
+  abort
+fi
+
+# If bam or intervals are missing report help function
+if [[ "${bam}" == "" || "${int}" == "" ]]; then
+  echo "Incorrect arguments."
+  echo "Bam and integers are required."
+  helpFunction
+  abort
+fi
+
+#######################
+##~Tools & Resources~##
+#######################
+
+# Create temporary folder
+mkdir -p ./tmpFP
+tmp="./tmpFP"
+
+# Set tools (requires samtools and bedtools to be available on path)
+
+#Test for samtools and bedtools
+samtools=$(command -v samtools)
+bedtools=$(command -v bedtools)
+footprints="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )/foots"
+
+echo ""
+
+if [ -z $samtools ] ; then
+  echo "Can't find Samtools. Please make sure this tool is installed and on the path"
+  echo ""
+else
+  echo -e "\t Using Samtools: ${samtools}"
+fi 
+
+echo ""
+
+if [ -z $bedtools ] ; then
+  echo "Can't find Bedtools. Please make sure this tool is installed and on the path"
+  abort
+else
+  echo -e "\t Using Bedtools: ${bedtools}"
+  intersectBed="$(dirname ${bedtools})/intersectBed"
+fi 
+
+echo ""
+
+if [ -z $intersectBed ] ; then
+  echo "Can't find Bedtools tool intersectBed. Please make sure Bedtools is installed and on the path"
+  abort
+else
+  echo -e "\t Using intersectBed: ${intersectBed}"
+fi 
+
+echo ""
+
+#################################
+##~Mutation burden calculation~##
+#################################
+
+# Test if any entered bam exists
+if [ ! -d ${bam} ] && [ $(ls -1 ${bam} | wc -l) == "0" ]
+then
+  echo "Cannot find bam file: ${bam}"
+  abort
+fi
+
+# Test if bam is called bam
+if [ ! -d ${bam} ] && [ $(ls -1 ${bam} | wc -l) == "1" ] && [[ ${bam} != *".bam" ]]
+then
+  echo "Selected file is not a bam file: ${bam}"
+  abort
+fi
+
+# Find out if one bam has been entered and calculate footprint
+if [ ! -d ${bam} ] && [ $(ls -1 ${bam} | wc -l) == "1" ] && [[ ${bam} == *".bam"* ]]
+then
+  echo ""
+  echo "Calculating footprint on file: ${bam}"
+  echo ""
+  echo "Minimum coverage selected: ${min}"
+     
+  # Calculate base pairs with minimum coverage
+  bp="$(${footprints} ${bam} ${min} | awk '{$3=$2; print}' | tr ' ' '\t' | ${intersectBed} -a stdin -b ${int} | wc -l)"
+    
+  # Test if calculating base pairs worked
+  if [ ${bp} == "0" ]
+    then
+      echo ""
+      echo "Script failed during coverage calculation"
+      abort
+  fi
+  
+  # Report to STDOUT
+  echo -e "\tNumber of base pairs in file with greater than ${min} coverage: ${bp}"
+  
+  # Write to file if requested
+  if [ ! -z ${out} ]
+  then
+    echo "Writing results to output file: ${out}"
+    echo -e "BAM\tBP" > ${out}
+    echo -e "${bam}\t${bp}" >> ${out}
+  fi
+  
+fi
+
+# Find out if directory has been entered and if it contains bams
+if [ -d ${bam} ] && [ $(ls -1 ${bam}/*.bam | wc -l) == "0" ]
+then
+  echo "Selected directory contains no bam files: ${bam}"
+  abort
+elif [ -d ${bam} ] && [ $(ls -1 ${bam}/*.bam | wc -l) != "0" ]
+then
+# If directory contains bams, calculate footprint
+  echo ""
+  echo "Calculating footprint on multiple bams...(this may take some time)"
+  echo ""
+  echo "Minimum coverage selected: ${min}"
+ 
+  #Write to output if requested, if not write table format to STDOUT
+  if [ ! -z ${out} ]
+    then
+      echo "Writing results to output file: ${out}"
+      echo -e "BAM\tBP" > ${out}
+  fi
+  # Work through list of bams
+  for file in $(ls ${bam}/*.bam) ; do
+    
+    # Exit if bam does not exist
+    if [ ! -f ${file} ]
+      then
+        echo ""
+        echo "Cannot find bam file: ${file}"
+        abort
+    fi
+    echo ""
+    echo "Calculating footprint on file: ${file}"
+  
+    #Calculate base pairs with minimum coverage
+    bp="$(${footprints} ${file} ${min} | awk '{$3=$2; print}' | tr ' ' '\t' | ${intersectBed} -a stdin -b ${int} | wc -l)"
+    
+      # Test if calculating base pairs worked
+    if [ ${bp} == "0" ]
+      then
+        echo "Script failed during coverage calculation"
+        abort
+    fi
+  
+    #Write to output if requested, if not write table format to STDOUT
+    if [ ! -z ${out} ]
+      then
+        echo -e "${file}\t${bp}" >> ${out}
+      else
+        echo -e "\tNumber of base pairs in ${file} with greater than ${min} coverage: ${bp}"
+    fi 
+  done   
+fi
+
+trap : 0
+
+rm -r ${tmp}
+
+echo >&2 '
+Finished calculating footprint!
+Have a great day :D
+'
+

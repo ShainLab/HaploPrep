@@ -1,0 +1,46 @@
+---------------------------------------------
+            Welcome to footprints
+---------------------------------------------
+Thank you for downloading footprints v.0.1.
+
+To install please make sure you have the following requirements
+-------------
+Requirements
+-------------
+samtools-0.1.19
+bedtools
+
+If you don't have this version of samtools installed please follow steps below to install and add to path. Otherwise skip to the next step.
+
+-------------------------
+Install Samtools v.0.1.19
+-------------------------
+# You make require --no-check-certificates here. 
+# If you are not comfortable with using this link please find an alternative download online.
+wget https://sourceforge.net/projects/samtools/files/samtools/0.1.19/samtools-0.1.19.tar.bz2
+
+tar -xf samtools-0.1.19.tar.bz2
+
+cd samtools-0.1.19
+
+make
+
+export PATH=/path/to/samtools-0.1.19:$PATH
+
+------------------------
+Install Footprints v.0.1
+------------------------
+./configure
+make
+
+-------------------
+Installation Errors
+-------------------
+# If you recieve the following error during configure:
+configure: error: cannot find install-sh or install.sh in "." "./.." "./../.."
+
+# ...you may need to reinitialize 
+autoreconf -i
+
+# This requires automake, autoconf, and libtool so install these if you need to
+sudo apt-get install autoconf automake libtool 
