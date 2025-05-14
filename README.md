@@ -33,3 +33,46 @@ Please refer to the following publication and preprints for use cases:
 
 _*jointly led the project._
 
+## How to clone and build this app to run on DNAnexus?
+
+1. Clone this repository:
+  ```
+  git clone https://github.com/ShainLab/HaploPrep.git
+  ```
+2. Move and rename "DNAnexus_app" subdirectory to "HaploPrep" (test-dataset should not be included). _Note: This is to ensure the proper sturucture for DNAnexus app build_:
+  ```
+  cp -r HaploPrep/DNAnexus_app ./HaploPrep
+  ```
+3. **[IMPORTANT!]** Due to GitHub file size limits, please do the following before building the app:
+
+&nbsp;&nbsp;&nbsp;&nbsp; a. Move into this subdirectory:
+ ```
+  cd HaploPrep/resources/home/dnanexus/hg19
+  ```
+&nbsp;&nbsp;&nbsp;&nbsp; b. Uncompress ucsc.hg19.fasta and remove the tarball:
+  ```
+  tar -xzf ucsc.hg19.fasta.tar.gz &&  rm ucsc.hg19.fasta.tar.gz
+  ```
+&nbsp;&nbsp;&nbsp;&nbsp; c. Uncompress hg19.fa and remove the tarball:
+  ```
+  tar -xzf hg19.fa.tar.gz && rm hg19.fa.tar.gz
+  ```
+&nbsp;&nbsp;&nbsp;&nbsp; d. Move out of the current directory, create a tarball of the hg19 directory, then remove the directory:
+  ```
+  cd ../ ; tar -czf hg19.tar.gz hg19 && rm -rf hg19
+  ```
+4. You can now begin building this app on DNAnexus using the following commands:
+
+&nbsp;&nbsp;&nbsp;&nbsp; a. Install dx-toolkit (if not already installed): [dx-toolkit installation](https://documentation.dnanexus.com/downloads)  
+&nbsp;&nbsp;&nbsp;&nbsp; b. Move into the root directory:
+```
+cd HaploPrep
+```  
+&nbsp;&nbsp;&nbsp;&nbsp; c. Run the build command. _Replace ProjectName:path/to/your/directory with your DNAnexus project name and path for app to build._
+```
+dx build -d ProjectName:path/to/your/directory
+``` 
+
+You should see the app in this directory when done. Select it, add the input files to their respective input boxes, under Workflow Actions set your output folder, then click start as analysis.
+
+
