@@ -1,6 +1,6 @@
 # HaploPrep
 
-HaploPrep_v1.2.0
+HaploPrep_v1.2.2
 
 ## What does this app do?
 1. Initial filtering : Processes FreeBayes variant calls to identify heterozygous SNPs. Filters for SNPs with a population allele frequency ≥ 1% in the 1000 Genomes database and read allele frequency between 30-70% (heterozygous) based on FreeBayes estimates.  
