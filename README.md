@@ -75,9 +75,9 @@ _*jointly led the project._
 ```
 cd HaploPrep
 ```  
-&nbsp;&nbsp;&nbsp;&nbsp; c. Run the build command. _Replace ProjectName:path/to/your/directory with your DNAnexus project name and path for app to build._
+&nbsp;&nbsp;&nbsp;&nbsp; c. Run the build command. _Replace ProjectName:path/to/your/directory/ with your DNAnexus project name and path for app to build._
 ```
-dx build -d ProjectName:path/to/your/directory
+dx build -d ProjectName:path/to/your/directory/
 ``` 
 
 You should see the app in this directory when done. Select it, add the input files to their respective input boxes, under Workflow Actions set your output folder, then click start as analysis.
