@@ -2,7 +2,7 @@
   "name": "HaploPrep",
   "title": "HaploPrep",
   "summary": "Identify high-quality heterozygous SNPs and prepare them for haplotype phasing by filtering variants based on population frequency, allelic balance, and sequencing depth from DNA-seq data.",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "dxapi": "1.0.0",
   "inputSpec": [
     {
