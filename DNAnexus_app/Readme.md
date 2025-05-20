@@ -1,19 +1,16 @@
-# HaploPrep (DNAnexus Platform App)
+# HaploPrep
 
-HaploPrep v1.2.0
-
-This is the source code for an app that runs on the DNAnexus Platform.
-For more information about how to run or modify it, see
-https://documentation.dnanexus.com/.
+HaploPrep_v1.2.0
 
 ## What does this app do?
-1.	<ins>Initial filtering</ins> : Processes FreeBayes variant calls to identify heterozygous SNPs. Filters for SNPs with a population allele frequency ≥ 1% in the 1000 Genomes database and read allele frequency between 30-70% (heterozygous) based on FreeBayes estimates.  
-2.	<ins>Depth analysis</ins> : Runs samtools mpileup on filtered SNPs to check read depth at each variant position and count reference and alternate allele reads.  
-3.	<ins>Refinement</ins> : Further filters SNPs based on actual read data; filters for variants with read allele frequency between 40-60% and read depth ≥ 10. These are the "Informative SNPs".  
-4.	<ins>Phasing</ins> : Uses GATK ReadBackedPhasing tool to phase these "Informative SNPs", determining which variants are on the same haplotype based on read information. Extracts chromosome position, reference/alternate alleles, and phased allele assignments indicating which allele is on each haplotype.  
+1. Initial filtering : Processes FreeBayes variant calls to identify heterozygous SNPs. Filters for SNPs with a population allele frequency ≥ 1% in the 1000 Genomes database and read allele frequency between 30-70% (heterozygous) based on FreeBayes estimates.  
+2. Depth analysis : Runs samtools mpileup on filtered SNPs to check read depth at each variant position and count reference and alternate allele reads.  
+3. Refinement : Further filters SNPs based on actual read data; filters for variants with read allele frequency between 40-60% and read depth ≥ 10. These are the "Informative SNPs".  
+4. Phasing : Uses GATK ReadBackedPhasing tool to phase these "Informative SNPs", determining which variants are on the same haplotype based on read information. Extracts chromosome position, reference/alternate alleles, and phased allele assignments indicating which allele is on each haplotype.  
 
 - - -
 Note: Other variant callers aside from FreeBayes could be used, as long as they produce a vcf of candidate SNPs with similar column headers and structure. We provide sample input files to mimic for the user's convenience; please refer to test-dataset.
+- - -
 
 ## What does this app output?
 •	InformativeSNPs.txt : txt file of the FreeBayes data after initial filtering (output from step 1)  
