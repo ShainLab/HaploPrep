@@ -29,7 +29,7 @@ If you would like you clone the app and build it on your own DNAnexus account, p
 - FBtxt - A text file containing annovar annotation of the FreeBayes vcf
 
 - - -
-Note: Other variant callers aside from FreeBayes could be used, as long as they produce a vcf of candidate SNPs with similar column headers and structure. We provide sample input files to mimic for the user's convenience; please refer to test-dataset.
+Note: Other variant callers aside from FreeBayes could be used, as long as they produce a vcf of candidate SNPs with similar column headers and structure. We provide sample input files to mimic for the user's convenience; please refer to [test-dataset](https://github.com/ShainLab/HaploPrep/tree/main/test-dataset).
 - - -
 
 ## What are typical use cases for this app?
