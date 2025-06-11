@@ -4,8 +4,8 @@ To verify that the user could use alternative approaches to come up with an init
 
 ## Files
 
-- `FB-InformativeSNPs.vcf` - Output using FreeBayes variant caller
-- `HC-InformativeSNPs.vcf` - Output using HaplotypeCaller variant caller  
+- `FB-InformativeSNPs.vcf` - InformativeSNPs vcf output from HaploPrep using FreeBayes variant caller
+- `HC-InformativeSNPs.vcf` - InformativeSNPs vcf output from HaploPrep using HaplotypeCaller variant caller  
 - `variantcallercomparison.pdf` - Summary of metrics comparing both callers
 
 ## Notes
